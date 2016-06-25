@@ -1,4 +1,3 @@
-@@ -0,0 +1,60 @@
 'use strict';
 
 var through = require('through2');
@@ -59,4 +58,3 @@ module.exports = function (options, settings) {
         cb();
     });
 };
-\ No newline at end of file
