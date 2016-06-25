@@ -1,6 +1,6 @@
 # gulp-tpl
 
-<!-- tpl:aaa bbb -->
+<pre><-- tpl:aaa bbb --></pre>
 This will be instead of <% aaa %> to bbb form your html.
 
 <block:aaa>
