@@ -22,7 +22,6 @@
   },
   "homepage": "https://github.com/thundergaz/gulp-tpl#readme",
   "devDependencies": {
-    "ejs": "^2.4.2",
     "gulp": "^3.9.1",
     "gulp-util": "^3.0.7",
     "through2": "^2.0.1"
