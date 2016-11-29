@@ -1,6 +1,6 @@
 {
   "name": "gulp-tpl",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "it's for html template",
   "main": "index.js",
   "scripts": {
