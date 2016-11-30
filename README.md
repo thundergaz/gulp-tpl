@@ -9,4 +9,8 @@ It will include file public/base.html
 ```html
 <block name="body">Hellow</block>
 ```
-It will replace <'block name="body">Hellow<'/block> in the template public/base.html
+It will replace
+```html
+<block name="body">Hellow</block>
+```
+in the template public/base.html
