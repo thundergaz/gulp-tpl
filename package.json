@@ -1,7 +1,7 @@
 {
-  "name": "gulp-tpl",
+  "name": "gulp-intpl",
   "version": "2.0.0",
-  "description": "it's for html template",
+  "description": "html template",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
