@@ -1,11 +1,10 @@
 # gulp-tpl
+Extend
+<extend name="public/base" />
 
-<pre><-- tpl:aaa bbb --></pre>
-This will be instead of <% aaa %> to bbb form your html.
+include
 
-<block:aaa>
-<p>hey</p>
-<div>hello world!</div>
-</block:aaa>
+replace
+<block name="body">Hellow</block>
 
-This also can instead of <% aaa %> to <p>hey</p> /br <div>hello world!<div>.
+it will replace <block name="body">Hellow</block> in the template public/base.html
