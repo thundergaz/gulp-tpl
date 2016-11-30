@@ -1,10 +1,12 @@
 # gulp-tpl
-Extend
+##Extend
+```html
 <extend name="public/base" />
+```
+*It will include file public/base.html 
 
-include
-
-replace
+##replace
+```html
 <block name="body">Hellow</block>
-
-It will replace <block name="body">Hellow</block> in the template public/base.html
+```
+*It will replace '<block name="body">Hellow</block>' in the template public/base.html
