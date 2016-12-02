@@ -51,48 +51,53 @@ module.exports = function (options, settings) {
     function getplace(content,option){
         var str = /<block\sname="(\w+)">/g;
         if(str.test(content)){
-         var content = content.replace(/<block\sname="(\w+)">([\w\W]*?)<\/block>/g,function($1,$2,$3){ 
+         var content = content.replace(/<block\sname="(\w+)">\r?\n?\t?([\w\W]*?)\r?\n?\t?<\/block>/g,function($1,$2,$3){
             if(str.test($3)){
                 return $1;
             }
-            if(option[$2]){
+            if(option[$2] === undefined){
+                return $3;
+            }else{
                 return option[$2];
             }
-            return $3;
          })
+
          if(str.test(content)){
-            var content = content.replace(/<block\sname="(\w+)">([\w\W]*)<\/block>/g,function($1,$2,$3){
-                if(options[$2]){
-                    return option[$2];
+            var content = content.replace(/<block\sname="(\w+)">\r?\n?\t?([\w\W]*)\r?\n?\t?<\/block>/g,function($1,$2,$3){
+                if(options[$2] === undefined){
+                    return $3;
+                } else {
+                    return options[$2];
                 }
-                getplace($3,option);
             })
-          }
-        }
+            var content = getplace(content,option);
+            return content;
+          } 
+        } 
         return content;
     }
 
     function getoption(contents){
         var str = /<block\sname="(\w+)">/g;
             if(str.test(contents)){
-                var contents = contents.replace(/<block\sname="(\w+)">\r\n?([\w\W]*?)\r\n\t?<\/block>/g,function($1,$2,$3){
+                var contents = contents.replace(/<block\sname="(\w+)">\r?\n?([\w\W]*?)\r?\n?\t?<\/block>/g,function($1,$2,$3){
                 var str = /<block\sname="(\w+)">/g;
                 if(str.test($3)){
                         return $1;
-                }else {
+                    }else {
                         options[$2]=$3;
                         return '';
                     }
                 })
                if(str.test(contents)){
-                var contents = contents.replace(/<block\sname="(\w+)">\r\n\t?([\w\W]*)\r\n\t?<\/block>/g,function($1,$2,$3){
+                var contents = contents.replace(/<block\sname="(\w+)">\r?\n?\t?([\w\W]*)\r?\n?\t?<\/block>/g,function($1,$2,$3){
                     options[$2]=$3.replace(/<block\sname="(\w+)">([\w\W]*?)<\/block>/g,'');
                     getoption($3);
                     return '';
                 })
+                return contents;
                } 
             }
-            console.log(options);
-        return contents;
+            return contents;
     }
 };
