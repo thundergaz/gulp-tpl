@@ -1,6 +1,7 @@
 'use strict';
 
 var through = require('through2');
+var path = require('path');
 var gutil = require('gulp-util');
 var fs = require('fs');
 
@@ -17,15 +18,16 @@ module.exports = function (options, settings) {
             this.emit(
                 'error',
                 new gutil.PluginError('gulp-tpl', 'Streaming not supported')
-            );
+                );
         }
         options.filename = file.path;
+        options.dir = file.base;
         try {
-            file.path = gutil.replaceExtension(file.path, settings.ext);         
+            file.path = gutil.replaceExtension(file.path, settings.ext);
             var optionsn = getoption(file.contents.toString());
             file.contents = new Buffer(
                 formartStr(changeStr(optionsn,options))
-            );
+                );
         } catch (err) {
             this.emit('error', new gutil.PluginError('gulp-tpl', err.toString()));
         }
@@ -33,70 +35,66 @@ module.exports = function (options, settings) {
         cb();
     });
     function changeStr(content,option){
-         var content = content.replace(/<extend\sname="(\w+\/*\w+\.*\w+)"\s\/>/g,function($a,$b){
-                $b = $b.replace(/\//,"\\");
-               var tagname = option.filename.replace(/\w+.html$/,$b+'.html');
-                tagname = fs.readFileSync(tagname).toString();
-                return tagname;
+       var content = content.replace(/<extend\sname="([\w\W]*?.\w+)"\s?\/>/g,function($a,$b){
+        var tagname = path.resolve(options.dir,$b);
+        tagname = gutil.replaceExtension(tagname, settings.ext);
+        tagname = fs.readFileSync(tagname).toString();
+        return tagname;
+    })
+       return getplace(content,option);
+   }
+   function formartStr(str){
+    var str=str.replace(/&gt;/g,'>').replace(/&lt;/g,'<').replace(/&#34;/g,'"');
+    return str;
+}
+function getplace(content,option){
+    var str = /<block\sname="(\w+)">/g;
+    if(str.test(content)){
+       var content = content.replace(/<block\sname="(\w+)">\r?\n?\t?([\w\W]*?)\r?\n?\t?<\/block>/g,function($1,$2,$3){
+        if(str.test($3)){
+            return $1;
+        }
+        if(option[$2] === undefined){
+            return $3;
+        }else{
+            return option[$2];
+        }
+    })
+       if(str.test(content)){
+        var content = content.replace(/<block\sname="(\w+)">\r?\n?\t?([\w\W]*)\r?\n?\t?<\/block>/g,function($1,$2,$3){
+            if(options[$2] === undefined){
+                return $3;
+            } else {
+                return options[$2];
+            }
         })
-        return getplace(content,option);
-    }
-
-    function formartStr(str){
-        var str=str.replace(/&gt;/g,'>').replace(/&lt;/g,'<').replace(/&#34;/g,'"');
-        return str;
-    }
-
-    function getplace(content,option){
-        var str = /<block\sname="(\w+)">/g;
-        if(str.test(content)){
-         var content = content.replace(/<block\sname="(\w+)">\r?\n?\t?([\w\W]*?)\r?\n?\t?<\/block>/g,function($1,$2,$3){
+        var content = getplace(content,option);
+        return content;
+    } 
+} 
+return content;
+}
+function getoption(contents){
+    var str = /<block\sname="(\w+)">/g;
+    if(str.test(contents)){
+        var contents = contents.replace(/<block\sname="(\w+)">\r?\n?([\w\W]*?)\r?\n?\t?<\/block>/g,function($1,$2,$3){
+            var str = /<block\sname="(\w+)">/g;
             if(str.test($3)){
                 return $1;
+            }else {
+                options[$2]=$3;
+                return '';
             }
-            if(option[$2] === undefined){
-                return $3;
-            }else{
-                return option[$2];
-            }
-         })
-
-         if(str.test(content)){
-            var content = content.replace(/<block\sname="(\w+)">\r?\n?\t?([\w\W]*)\r?\n?\t?<\/block>/g,function($1,$2,$3){
-                if(options[$2] === undefined){
-                    return $3;
-                } else {
-                    return options[$2];
-                }
+        })
+        if(str.test(contents)){
+            var contents = contents.replace(/<block\sname="(\w+)">\r?\n?\t?([\w\W]*)\r?\n?\t?<\/block>/g,function($1,$2,$3){
+                options[$2]=$3.replace(/<block\sname="(\w+)">([\w\W]*?)<\/block>/g,'');
+                getoption($3);
+                return '';
             })
-            var content = getplace(content,option);
-            return content;
-          } 
-        } 
-        return content;
-    }
-
-    function getoption(contents){
-        var str = /<block\sname="(\w+)">/g;
-            if(str.test(contents)){
-                var contents = contents.replace(/<block\sname="(\w+)">\r?\n?([\w\W]*?)\r?\n?\t?<\/block>/g,function($1,$2,$3){
-                var str = /<block\sname="(\w+)">/g;
-                if(str.test($3)){
-                        return $1;
-                    }else {
-                        options[$2]=$3;
-                        return '';
-                    }
-                })
-               if(str.test(contents)){
-                var contents = contents.replace(/<block\sname="(\w+)">\r?\n?\t?([\w\W]*)\r?\n?\t?<\/block>/g,function($1,$2,$3){
-                    options[$2]=$3.replace(/<block\sname="(\w+)">([\w\W]*?)<\/block>/g,'');
-                    getoption($3);
-                    return '';
-                })
-                return contents;
-               } 
-            }
             return contents;
+        } 
     }
+    return contents;
+}
 };
