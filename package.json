@@ -1,6 +1,6 @@
 {
   "name": "gulp-intpl",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "html template",
   "main": "index.js",
   "scripts": {

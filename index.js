@@ -6,10 +6,9 @@ var fs = require('fs');
 
 module.exports = function (options, settings) {
     settings = settings || {};
-    options = options || {};
-    
     settings.ext = typeof settings.ext === "undefined" ? ".html" : settings.ext;
     return through.obj(function (file, enc, cb) {
+        options = {};
         if (file.isNull()) {
             this.push(file);
             return cb();
@@ -20,6 +19,7 @@ module.exports = function (options, settings) {
                 new gutil.PluginError('gulp-tpl', 'Streaming not supported')
             );
         }
+        console.log(file.path);
         options.filename = file.path;
         try {
             file.path = gutil.replaceExtension(file.path, settings.ext);         
